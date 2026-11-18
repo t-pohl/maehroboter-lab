@@ -5873,6 +5873,18 @@ Blockly.Msg.SENSOR_TEMPERATURE_GETSAMPLE_TOOLTIP = Blockly.Msg.TEMPERATURE_GETSA
     try { this.SOUNDS_[name] = new window.Audio(quellen[0]); } catch (e) { /* ohne Klang weiter */ }
   };
 
+  /* ---------- Chrome und Edge: Klick auf Bloecke ----------
+     Blockly holt einen Block nach vorn, indem es ihn per appendChild neu einhaengt, im Flyout schon
+     beim Ueberfahren mit der Maus. Chromium schickt das naechste mousedown dann nicht mehr an den
+     Block, sondern an das Elternelement: Bloecke liessen sich nicht aus der Toolbox holen.
+     Im Flyout ueberlappen sich Bloecke nicht, dort entfaellt das Umhaengen. Sonst nur, wenn der Block
+     noch nicht oben liegt. Firefox war nicht betroffen, dort aendert sich nichts. */
+  Blockly.BlockSvg.prototype.addSelect = function () {
+    var g = this.svgGroup_, eltern = g.parentNode;
+    Blockly.addClass_(g, 'blocklySelected');
+    if (eltern && !this.isInFlyout && eltern.lastChild !== g) eltern.appendChild(g);
+  };
+
   /* ---------- kleine Helfer ---------- */
   function toast(text) {
     var t = document.getElementById('orToast');
